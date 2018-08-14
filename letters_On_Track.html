@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<style>
+.button {
+    background-color: #e7e7e7; 
+	border: 2px solid black;
+	border-color: #888888;
+	color: black;
+    padding: 15px 85px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+  
+input[type=text] {
+  width: 200px;
+  border: 2px solid grey;
+  height: 36px;
+}
+
+input[type=range] {
+  width: 200px;
+  border: 2px solid grey;
+}
+
+#letterid { 
+	text-align:right
+}
+
+.wrapper {
+    max-width: 420px;
+    background: white;
+    height: 40px;
+    text-align: right;
+	border: 2px solid grey;
+}
+
+.marquee {
+    background: white;
+    white-space: nowrap;
+    -webkit-animation: rightThenLeft 4s linear;
+}
+
+#wrap {
+width: 100%;
+height: 90px;
+background-color: #fff;
+border: 1px solid white;
+}
+
+#fp1 {
+width: 210px;
+height: 90px;
+background-color: #ff;
+float: left;
+}
+
+#fp2 {
+width: 210px;
+height: 90px;
+float: left;
+background-color: #fff;
+}
+
+#fp3 {
+width: 20%;
+height: 20px;
+float: left;
+background-color: #666;
+}
+
+</style> 
+</head>
+<body>
+Track
+<br>
+<div id="div2" style="border:2px solid grey; position: relative; width: 430px; height: 40px;" >
+    <marquee></marquee>
+</div>
+<div id="wrap">
+    <div id="fp1">
+		<p>Letter<p>
+		<input type="text" id="letter" onkeypress="return validation(event,value);" onfocus="clearLetter();">	
+	</div>
+    <div id="fp2">
+		<p>Speed<p>
+		<div id="sliderAmount"></div>
+		<input id="slide" type="range" list="tickmarks" onclick="ChangeScrollAmount();">
+		<datalist id="tickmarks">
+			<option value="0">
+			<option value="10">
+			<option value="20">
+			<option value="30">
+			<option value="40">
+			<option value="50">
+			<option value="60">
+			<option value="70">
+			<option value="80">
+			<option value="90">
+			<option value="100">
+		</datalist>
+	</div>
+</div>
+<br>
+<button class="button" onclick="goLetter();">GO!</button>
+<button class="button" onClick="removeLetter();">STOP</button>
+<br>
+<script>
+var rows = 0;
+var letters = new Array(rows);
+
+function validation(event,value) {
+	var letter = event.which;
+	if(value.length > 0){
+		return false;
+	}
+
+	if (letter > 31 && letter != 32 &&  (letter < 65 || letter > 90) && (letter < 97 || letter > 122)){
+		return false;
+	}
+}
+
+function goLetter() {
+	var letter = document.getElementById("letter").value;
+	var doesLetterExist = 0;
+	for(i=0; i< rows; i++)
+	{
+		if(letters[rows] == letter)
+		{
+			//letter already exists inside data structure
+			doesLetterExist = 1;
+		}
+	}
+	if(doesLetterExist != 1)
+	{
+		rows ++
+		letters[rows]=letter;
+		var x = document.getElementById("letter").value;
+		//Add one more letter in the structure
+		var para = document.createElement("marquee");
+		para.direction = "right";
+		para.behavior = "alternate";
+		para.style = "position: absolute; top: 0;"
+		para.id = "marquee_"+x;
+		var speed = document.getElementById ("slide");
+		para.scrollAmount = speed.value / 10.0;
+		var node = document.createTextNode(x);
+		para.appendChild(node);
+		var element = document.getElementById("div2");
+		element.appendChild(para);
+	}
+}
+
+function textLength(value) {
+   var maxLength = 1;
+   if(value.length > maxLength) return false;
+   return true;
+}
+
+document.getElementById('letter').onkeyup = function(){
+     if(!textLength(this.value)) alert('Only one letter as input');
+}
+var slide = document.getElementById('slide'),
+    sliderDiv = document.getElementById("sliderAmount");
+
+slide.onchange = function() {
+    sliderDiv.innerHTML = this.value / 10.0;
+}
+
+ function ChangeScrollAmount () {
+    var marquee = document.getElementById ("marquee");
+    var input = document.getElementById ("slide");
+	if(input.value!=null){
+		marquee.scrollAmount = input.value;
+	}
+}
+
+function removeLetter() {
+	var parent = document.getElementById("div2");
+	var x = document.getElementById("letter").value;
+	var child_id = "marquee_"+x;
+	var child = document.getElementById(child_id);
+	parent.removeChild(child);
+}
+
+function clearLetter(){  
+   document.getElementById('letter').value = "";
+}
+</script>
+</body>
+</html>
